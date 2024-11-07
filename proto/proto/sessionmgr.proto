@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option go_package = "/sessionmgr_pb";
+
+message Ready {
+  int32 SessionID = 1;
+  bytes dAtA = 2;
+}
