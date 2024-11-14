@@ -1,4 +1,4 @@
-module github.com/fvfv1013/sessionmgr
+module sessionmgr
 
 go 1.23.2
 

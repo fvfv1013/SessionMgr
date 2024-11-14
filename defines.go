@@ -2,7 +2,7 @@ package sessionmgr
 
 import (
 	"errors"
-	pb "github.com/fvfv1013/sessionmgr/proto/pkg/sessionmgr_pb"
+	pb "sessionmgr/proto/pkg/ready_pb"
 )
 
 type SessionManager interface {
@@ -23,15 +23,12 @@ type SessionManager interface {
 	// DropSession allow user to drop a session
 	// Warning: don't call DropSession easily, because it is very slow; not-used session will be shutdown automatically
 	DropSession(SessionID int32) error
-	// ReloadConfig will force SessionManager reload config from conf.json
-	// warning: it may not work immediately
-	ReloadConfig() error
 	// Discard a SessionManager
 	Discard() error
 }
 
-var ErrSessionID = errors.New("SessionID invalid")
+var ErrID = errors.New("SessionID invalid")
 var ErrCall = errors.New("manager has been discarded")
 var ErrLost = errors.New("session lost")
 var ErrWait = errors.New("service is not prepared")
-var ErrSDP = errors.New("sdp invalid")
+var ErrSdp = errors.New("sdp invalid")

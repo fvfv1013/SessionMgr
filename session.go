@@ -1,9 +1,9 @@
 package sessionmgr
 
 import (
-	"github.com/fvfv1013/sessionmgr/dbg"
-	"github.com/fvfv1013/sessionmgr/util"
 	"github.com/pion/webrtc/v4"
+	"sessionmgr/dbg"
+	"sessionmgr/util"
 	"time"
 )
 

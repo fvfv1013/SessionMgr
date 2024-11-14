@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+option go_package = "sessionmgr/proto/pkg/return_pb";
+import "error.proto";
+import "ready.proto";
+
+message Return {
+  Error err = 1;
+  ReturnCreateSession create_session_return = 2;
+  ReturnOffer offer_return = 3;
+  ReturnJoinSession join_session_return = 4;
+  ReturnAnswer answer_return = 5;
+  ReturnConfirmAnswer confirm_answer_return = 6;
+  ReturnSend send_return = 7;
+  ReturnReady ready_return = 8;
+  ReturnDropSession drop_session_return = 9;
+  ReturnReloadConfig reload_config_return = 10;
+  ReturnDiscard discard_return = 11;
+}
+
+message ReturnCreateSession {
+}
+
+message ReturnOffer {
+  string offer_base64 = 1;
+}
+
+message ReturnJoinSession {
+}
+
+message ReturnAnswer {
+  string answer_base64 = 1;
+}
+
+message ReturnConfirmAnswer {
+}
+
+message ReturnSend {
+}
+
+message ReturnReady {
+  repeated Ready ready_list = 1;
+}
+
+message ReturnDropSession {
+}
+
+message ReturnReloadConfig {
+}
+
+message ReturnDiscard {
+}

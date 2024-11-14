@@ -4,16 +4,15 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/fvfv1013/sessionmgr"
-	"github.com/fvfv1013/sessionmgr/dbg"
-	pb "github.com/fvfv1013/sessionmgr/proto/pkg/sessionmgr_pb"
 	"math/rand"
 	"os"
+	"sessionmgr"
+	"sessionmgr/dbg"
+	pb "sessionmgr/proto/pkg/ready_pb"
 	"time"
 )
 
 func main() {
-
 	args := os.Args[1:]
 	if len(args) < 1 {
 		fmt.Println("Usage: ./webrtcdemo sender")
@@ -41,7 +40,7 @@ func main() {
 func startSender() {
 	var sender sessionmgr.SessionManager
 	var err error
-	sender, err = sessionmgr.NewSessionManagerImpl()
+	sender, err = sessionmgr.NewSessionManagerImpl("conf.json")
 	if err != nil {
 		dbg.Fatal(dbg.ELSE, err)
 	}
@@ -50,7 +49,7 @@ func startSender() {
 	sessionID := rand.Int31()
 	err = sender.CreateSession(sessionID)
 	for err != nil {
-		if !errors.Is(err, sessionmgr.ErrSessionID) {
+		if !errors.Is(err, sessionmgr.ErrID) {
 			dbg.Fatal(dbg.ELSE, err)
 		}
 		sessionID = rand.Int31()
@@ -98,7 +97,7 @@ func startSender() {
 func startReceiver() {
 	var receiver sessionmgr.SessionManager
 	var err error
-	receiver, err = sessionmgr.NewSessionManagerImpl()
+	receiver, err = sessionmgr.NewSessionManagerImpl("conf.json")
 	if err != nil {
 		dbg.Fatal(dbg.ELSE, err)
 	}
@@ -111,7 +110,7 @@ func startReceiver() {
 	sessionID := rand.Int31()
 	err = receiver.JoinSession(sessionID, offerSDP)
 	for err != nil {
-		if !errors.Is(err, sessionmgr.ErrSessionID) {
+		if !errors.Is(err, sessionmgr.ErrID) {
 			dbg.Fatal(dbg.ELSE, err)
 		}
 		sessionID = rand.Int31()

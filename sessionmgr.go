@@ -1,11 +1,11 @@
 package sessionmgr
 
 import (
-	"github.com/fvfv1013/sessionmgr/conf"
-	"github.com/fvfv1013/sessionmgr/dbg"
-	pb "github.com/fvfv1013/sessionmgr/proto/pkg/sessionmgr_pb"
-	"github.com/fvfv1013/sessionmgr/util"
 	"github.com/pion/webrtc/v4"
+	"sessionmgr/conf"
+	"sessionmgr/dbg"
+	pb "sessionmgr/proto/pkg/ready_pb"
+	"sessionmgr/util"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -19,8 +19,8 @@ type SessionManagerImpl struct {
 	discarded    atomic.Bool // not protected by mu
 }
 
-func NewSessionManagerImpl() (*SessionManagerImpl, error) {
-	config, err := conf.LoadConfig()
+func NewSessionManagerImpl(ConfPath string) (*SessionManagerImpl, error) {
+	config, err := conf.LoadConfig(ConfPath)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (s *SessionManagerImpl) CreateSession(SessionID int32) error {
 	defer s.mu.Unlock()
 	if _, existed := s.sessionBook[SessionID]; existed {
 		dbg.Println(dbg.MANAGER, "int repeated")
-		return ErrSessionID
+		return ErrID
 	}
 	session, err := NewSession(&s.config.WebrtcConf)
 	if err != nil {
@@ -89,7 +89,7 @@ func (s *SessionManagerImpl) JoinSession(SessionID int32, sdpBase64 string) erro
 	defer s.mu.Unlock()
 	if _, existed := s.sessionBook[SessionID]; existed {
 		dbg.Println(dbg.MANAGER, "SessionID repeated")
-		return ErrSessionID
+		return ErrID
 	}
 	if err := s.joinSession(SessionID, sdpBase64); err != nil {
 		return err
@@ -177,13 +177,13 @@ func (s *SessionManagerImpl) DropSession(SessionID int32) error {
 	return nil
 }
 
-func (s *SessionManagerImpl) ReloadConfig() error {
+func (s *SessionManagerImpl) ReloadConfig(ConfPath string) error {
 	if s.discarded.Load() {
 		dbg.Println(dbg.MANAGER, ErrCall)
 		return ErrCall
 	}
 
-	config, err := conf.LoadConfig()
+	config, err := conf.LoadConfig(ConfPath)
 	if err != nil {
 		return err
 	}
@@ -345,7 +345,7 @@ func (s *SessionManagerImpl) joinSession(SessionID int32, sdpBase64 string) erro
 	}
 	if _, existed := s.sessionBook[SessionID]; existed {
 		dbg.Println(dbg.MANAGER, "int repeated")
-		return ErrSessionID
+		return ErrID
 	}
 
 	session, err := NewSession(&s.config.WebrtcConf)

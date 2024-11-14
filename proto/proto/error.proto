@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "sessionmgr/proto/pkg/error_pb";
+
+message Error{
+  string Message = 1;
+  ErrID err_id = 2;
+  ErrCall err_call = 3;
+  ErrLost err_lost = 4;
+  ErrWait err_wait = 5;
+  ErrSdp err_sdp = 6;
+}
+
+
+message ErrID{
+  int32 ID = 1;
+}
+
+message ErrCall{
+}
+
+message ErrLost{
+  int32 ID = 1;
+}
+
+message ErrWait{
+}
+
+message ErrSdp{
+}

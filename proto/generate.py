@@ -2,7 +2,7 @@ import os
 import subprocess
 
 PROTO_DIR = "./proto"
-OUT_DIR = "./pkg"
+OUT_DIR = "../../"
 
 if not os.path.exists(OUT_DIR):
     os.makedirs(OUT_DIR)

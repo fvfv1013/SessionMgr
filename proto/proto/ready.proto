@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "/sessionmgr_pb";
+option go_package = "sessionmgr/proto/pkg/ready_pb";
 
 message Ready {
   int32 SessionID = 1;

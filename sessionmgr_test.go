@@ -2,8 +2,8 @@ package sessionmgr
 
 import (
 	"fmt"
-	"github.com/fvfv1013/sessionmgr/dbg"
 	"math/rand"
+	"sessionmgr/dbg"
 	"testing"
 	"time"
 )
@@ -14,7 +14,7 @@ func TestLifeControl(t *testing.T) {
 		return
 	}
 	defer dbg.Close()
-	mgr, err := NewSessionManagerImpl()
+	mgr, err := NewSessionManagerImpl("conf.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,7 +67,7 @@ func TestDiscard(t *testing.T) {
 		return
 	}
 	defer dbg.Close()
-	mgr, err := NewSessionManagerImpl()
+	mgr, err := NewSessionManagerImpl("conf.json")
 	if err != nil {
 		t.Fatal(err)
 	}

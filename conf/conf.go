@@ -3,7 +3,7 @@ package conf
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fvfv1013/sessionmgr/dbg"
+	"sessionmgr/dbg"
 	"github.com/pion/webrtc/v4"
 	"os"
 )
@@ -14,7 +14,7 @@ type Configuration struct {
 	SessionLifeCycle int                  `json:"SessionLifeCycle"`
 }
 
-func LoadConfig() (*Configuration, error) {
+func LoadConfig(ConfPath string) (*Configuration, error) {
 	data, err := os.ReadFile("conf.json")
 	if err != nil {
 		dbg.Println(dbg.CONFIG, err)
