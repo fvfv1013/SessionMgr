@@ -10,7 +10,6 @@ import (
 	"sessionmgr"
 	"sessionmgr/communicate"
 	"sessionmgr/dbg"
-	pb "sessionmgr/proto/pkg/ready_pb"
 	"sessionmgr/proto/pkg/return_pb"
 	"time"
 )
@@ -112,12 +111,11 @@ func startSender() {
 }
 
 func startReceiver() {
-	var receiver sessionmgr.SessionManager
+	var receiver *communicate.CommString
+	var RetStr string
+	var Ret *return_pb.Return
 	var err error
-	receiver, err = sessionmgr.NewSessionManagerImpl("conf.json")
-	if err != nil {
-		dbg.Fatal(dbg.ELSE, err)
-	}
+	receiver = communicate.NewCommString("conf.json")
 
 	// 1. join session
 	fmt.Println("input offerSDP:")
@@ -125,37 +123,50 @@ func startReceiver() {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Fscanf(reader, "%s", &offerSDP)
 	sessionID := rand.Int31()
-	err = receiver.JoinSession(sessionID, offerSDP)
+	RetStr = receiver.JoinSession(sessionID, offerSDP)
+	Ret = Return(RetStr)
+	err = communicate.ErrorUnwrap(Ret.Err)
 	for err != nil {
 		if !errors.Is(err, sessionmgr.ErrID) {
 			dbg.Fatal(dbg.ELSE, err)
 		}
 		sessionID = rand.Int31()
-		err = receiver.JoinSession(sessionID, offerSDP)
+		RetStr = receiver.JoinSession(sessionID, offerSDP)
+		Ret = Return(RetStr)
+		err = communicate.ErrorUnwrap(Ret.Err)
 	}
 
 	// 2. get answer
-	answerSDP, err := receiver.Answer(sessionID)
+	RetStr = receiver.Answer(sessionID)
+	Ret = Return(RetStr)
+	err = communicate.ErrorUnwrap(Ret.Err)
 	for err != nil {
 		if !errors.Is(err, sessionmgr.ErrWait) {
 			dbg.Fatal(dbg.ELSE, err)
 		}
-		answerSDP, err = receiver.Answer(sessionID)
+		RetStr = receiver.Answer(sessionID)
+		Ret = Return(RetStr)
+		err = communicate.ErrorUnwrap(Ret.Err)
 	}
+	answerSDP := Ret.AnswerReturn.AnswerBase64
 	_ = answerSDP
 	fmt.Println("answer:", answerSDP)
 
 	// 3. receive data
 	for {
 		time.Sleep(2 * time.Second)
-		readys := make([]*pb.Ready, 0)
-		readys, err = receiver.Ready()
+		RetStr = receiver.Ready()
+		Ret = Return(RetStr)
+		err = communicate.ErrorUnwrap(Ret.Err)
 		for err != nil {
 			if !errors.Is(err, sessionmgr.ErrWait) {
 				dbg.Fatal(dbg.ELSE, err)
 			}
-			readys, err = receiver.Ready()
+			RetStr = receiver.Ready()
+			Ret = Return(RetStr)
+			err = communicate.ErrorUnwrap(Ret.Err)
 		}
+		readys := Ret.ReadyReturn.ReadyList
 		for _, ready := range readys {
 			fmt.Println("get message:", ready.SessionID, string(ready.DAtA))
 		}
