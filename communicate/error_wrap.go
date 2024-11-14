@@ -2,6 +2,7 @@ package communicate
 
 import (
 	"errors"
+	"fmt"
 	"sessionmgr"
 	"sessionmgr/proto/pkg/error_pb"
 )
@@ -29,4 +30,32 @@ func ErrorWrap(err error) *error_pb.Error {
 	}
 
 	return &errorProto
+}
+
+func ErrorUnwrap(errorProto *error_pb.Error) error {
+	if errorProto == nil {
+		return nil
+	}
+
+	if errorProto.ErrId != nil {
+		return sessionmgr.ErrID
+	}
+
+	if errorProto.ErrCall != nil {
+		return sessionmgr.ErrCall
+	}
+
+	if errorProto.ErrLost != nil {
+		return sessionmgr.ErrLost
+	}
+
+	if errorProto.ErrWait != nil {
+		return sessionmgr.ErrWait
+	}
+
+	if errorProto.ErrSdp != nil {
+		return sessionmgr.ErrSdp
+	}
+
+	return fmt.Errorf("unknown error: %s", errorProto.Message)
 }
